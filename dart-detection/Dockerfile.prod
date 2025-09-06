@@ -1,0 +1,40 @@
+# Build stage
+FROM alpine:3.20 AS build
+
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
+    cmake \
+    pkgconf \
+    opencv-dev \
+    curl-dev \
+    && rm -rf /var/cache/apk/*
+
+# Create app directory
+WORKDIR /build
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN mkdir -p cmake-build && cd cmake-build && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
+    cmake --build . --config Release && \
+    strip ./dart_detection
+
+# Final stage
+FROM alpine:3.20 AS app
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    opencv \
+    libcurl \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+COPY --from=build /build/cmake-build/dart_detection .
+
+# Ensure executable permissions
+RUN chmod +x ./dart_detection
+
+CMD ["./dart_detection"]

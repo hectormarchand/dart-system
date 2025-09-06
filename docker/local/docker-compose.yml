@@ -1,0 +1,15 @@
+services:
+  mongo:
+    image: mongo:8.0.11
+    container_name: dart-system-monogdb-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dart
+      MONGO_INITDB_ROOT_PASSWORD: d4rt
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

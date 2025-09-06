@@ -1,0 +1,22 @@
+FROM node:24-alpine AS build
+
+WORKDIR /build
+
+COPY package*.json .
+
+RUN npm install && npm cache clean --force
+
+COPY . ./
+
+RUN npm run build:prod
+
+FROM node:24-alpine AS app
+
+WORKDIR /app
+
+COPY --from=build /build/dist/server.cjs .
+
+EXPOSE 3000
+
+CMD ["node", "server.cjs"]
+

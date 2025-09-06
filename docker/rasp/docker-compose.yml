@@ -1,0 +1,48 @@
+services:
+  mongo:
+    image: mongo:8.0.11
+    container_name: dart-system-monogdb-prod
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dart
+      MONGO_INITDB_ROOT_PASSWORD: d4rt
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: ../../dart-backend/
+      dockerfile: Dockerfile.prod
+    container_name: dart-system-backend-prod
+    restart: unless-stopped
+    environment:
+      - mongodbUrl=mongodb://dart:d4rt@mongo:27017
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ../../dart-frontend/
+      dockerfile: docker/Dockerfile.prod
+    container_name: dart-system-frontend-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  detection:
+    build:
+      context: ../../dart-detection
+      dockerfile: Dockerfile.prod
+    container_name: dart-system-detection-prod
+    restart: unless-stopped
+    environment:
+      - BACKEND_URL=http://backend:3000
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

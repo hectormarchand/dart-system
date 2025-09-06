@@ -1,0 +1,22 @@
+{
+  "name": "dart-backend",
+  "version": "1.0.0",
+  "description": "Backend module for the dart system",
+  "type": "module",
+  "scripts": {
+    "dev": "listhen --watch --ws ./src/app.ts",
+    "build:prod": "tsc && esbuild src/server.ts --bundle --minify --platform=node --format=cjs --outfile=dist/server.cjs"
+  },
+  "author": "Hector Marchand",
+  "license": "MIT",
+  "dependencies": {
+    "h3": "^1.15.3",
+    "listhen": "^1.9.0",
+    "mongodb": "^6.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "esbuild": "^0.25.8",
+    "typescript": "^5.8.3"
+  }
+}
