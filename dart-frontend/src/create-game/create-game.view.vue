@@ -7,8 +7,10 @@ import Step from 'primevue/step'
 import StepPanel from 'primevue/steppanel'
 import { HttpService } from '@/http/http.service.ts'
 import type { CreateDartGameDto } from '@/common/dart.dtos.ts'
+import { type Router, useRouter } from 'vue-router'
 
 const httpService: HttpService = new HttpService()
+const router: Router = useRouter()
 
 const numberOfPlayers: Ref<number> = ref(1)
 const gameType: Ref<'301' | '501' | '701'> = ref('501')
@@ -26,6 +28,7 @@ async function createGame() {
   }
 
   await httpService.post({ path: '/games', body: payload })
+  await router.push({ name: 'game' })
 }
 </script>
 
