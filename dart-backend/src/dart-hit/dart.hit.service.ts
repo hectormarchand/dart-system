@@ -38,6 +38,7 @@ export class DartHitService {
 
         // Update player ppd and player score
         currentPlayer.score += dartHitDto.estimatedPoints;
+        currentPlayer.scoreThisRound += dartHitDto.estimatedPoints;
         const totalDartThrown: number = (dartGame.currentRound - 1) * THROW_PER_ROUND + currentPlayer.nbOfDartsThrownThisRound;
         currentPlayer.ppd = currentPlayer.score / totalDartThrown;
 
@@ -45,7 +46,10 @@ export class DartHitService {
         if (currentPlayer.nbOfDartsThrownThisRound >= THROW_PER_ROUND) {
             if (dartGame.currentPlayerIndex === dartGame.players.length - 1) {
                 dartGame.currentRound ++;
-                dartGame.players.forEach(player => player.nbOfDartsThrownThisRound = 0);
+                dartGame.players.forEach(player => {
+                    player.nbOfDartsThrownThisRound = 0;
+                    player.scoreThisRound = 0;
+                });
             }
 
             dartGame.currentPlayerIndex = (dartGame.currentPlayerIndex + 1) % dartGame.players.length;

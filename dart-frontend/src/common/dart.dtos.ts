@@ -3,6 +3,7 @@ export type DartGameType = '301' | '501' | '701'
 export interface DartPlayer {
   name: string
   score: number
+  scoreThisRound: number
   ppd: number
   nbOfDartsThrownThisRound: number
 }

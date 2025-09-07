@@ -5,6 +5,7 @@ export type DartGameType = "301" | "501" | "701";
 export class DartPlayer {
     name!: string;
     score!: number;
+    scoreThisRound!: number;
     ppd!: number;
     nbOfDartsThrownThisRound!: number;
 }

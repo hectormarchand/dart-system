@@ -18,20 +18,20 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div>
-      <span>{{ dartGame?.players[dartGame.currentPlayerIndex].score }}</span>
+  <div class="flex flex-col" v-if="dartGame">
+    <div class="text-center text-8xl pb-36 player-score-this-round">
+      <span>{{ dartGame.players[dartGame.currentPlayerIndex].scoreThisRound }}</span>
     </div>
 
     <div class="grid grid-cols-2 gap-4">
       <div
         class="border-2 border-dashed h-30 w-80 p-2"
+        v-for="(player, index) in dartGame.players"
         :class="{ borderOrange: index === dartGame?.currentPlayerIndex }"
-        v-for="(player, index) in dartGame?.players"
         :key="index"
       >
         <span>{{ player.name.toUpperCase() }}</span>
-        <span>{{ player.score }}</span>
+        <span>Score : {{ player.score }}</span>
         <span>PPD : {{ player.ppd }}</span>
       </div>
     </div>
@@ -41,5 +41,9 @@ onMounted(async () => {
 <style scoped>
 .borderOrange {
   border-color: var(--p-primary-color);
+}
+
+.player-score-this-round {
+  color: var(--p-primary-color);
 }
 </style>

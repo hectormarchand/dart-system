@@ -27,6 +27,7 @@ export class GameService {
                 nbOfDartsThrownThisRound: 0,
                 ppd: 0,
                 score: 0,
+                scoreThisRound: 0,
             } as DartPlayer
         });
 
