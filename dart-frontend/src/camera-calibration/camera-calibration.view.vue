@@ -1,15 +1,14 @@
 <script setup lang="ts">
-
-import CameraStream from "@/common/camera/camera-stream.component.vue";
+import CameraStream from '@/common/camera/camera-stream.component.vue'
 </script>
 
 <template>
   <div class="pt-40 flex justify-between">
     <div>
-      <CameraStream camera="left" class="border-2 border-dashed camera-stream" />
+      <CameraStream camera="left" class="border-2 border-dashed" />
     </div>
     <div>
-      <CameraStream camera="right" class="border-2 border-dashed camera-stream" />
+      <CameraStream camera="right" class="border-2 border-dashed" />
     </div>
   </div>
 
@@ -20,5 +19,4 @@ import CameraStream from "@/common/camera/camera-stream.component.vue";
   </div>
 </template>
 
-<style>
-</style>
+<style></style>

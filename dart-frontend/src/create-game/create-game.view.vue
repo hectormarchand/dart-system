@@ -6,26 +6,26 @@ import StepPanels from 'primevue/steppanels'
 import Step from 'primevue/step'
 import StepPanel from 'primevue/steppanel'
 import { HttpService } from '@/http/http.service.ts'
+import type { CreateDartGameDto } from '@/common/dart.dtos.ts'
 
-const httpService: HttpService = new HttpService();
+const httpService: HttpService = new HttpService()
 
-const numberOfPlayers: Ref<number> = ref(1);
-const gameType: Ref<'301' | '501' | '701'> = ref("501");
-const gameTypeOptions = ["301", "501", "701"];
+const numberOfPlayers: Ref<number> = ref(1)
+const gameType: Ref<'301' | '501' | '701'> = ref('501')
+const gameTypeOptions = ['301', '501', '701']
 
 const players: Ref<{ name: string }[]> = computed(() => {
-  return Array.from({ length: numberOfPlayers.value }, () => ({ name: "" }))
-});
-
+  return Array.from({ length: numberOfPlayers.value }, () => ({ name: '' }))
+})
 
 async function createGame() {
-  const payload = {
+  const payload: CreateDartGameDto = {
     players: players.value,
     gameType: gameType.value,
-    totalRound: 15 // Fixed to 15 for now
-  };
+    totalRound: 15, // Fixed to 15 for now
+  }
 
-  await httpService.post({ path: "/games", body: payload });
+  await httpService.post({ path: '/games', body: payload })
 }
 </script>
 
@@ -67,7 +67,7 @@ async function createGame() {
             </div>
           </div>
           <div class="flex pt-6 justify-between">
-            <RouterLink to="/">
+            <RouterLink :to="{ name: 'home' }">
               <Button severity="secondary" label="Annuler" />
             </RouterLink>
             <Button label="Suivant" @click="activateCallback('2')" />
@@ -75,23 +75,23 @@ async function createGame() {
         </StepPanel>
         <StepPanel v-slot="{ activateCallback }" value="2">
           <div class="flex flex-col">
-            <div class="border-2 border-dashed flex flex-auto flex-col gap-3 justify-center items-center py-10">
+            <div
+              class="border-2 border-dashed flex flex-auto flex-col gap-3 justify-center items-center py-10"
+            >
               <div v-for="(player, index) in players" :key="index" class="flex flex-col gap-1">
-                <label :for="'player-' + index">{{ "Nom du joueur " + (index + 1) }}</label>
-                <InputText :id="'player-' + index" type="text" v-model="player.name" placeholder="Nom du joueur"/>
+                <label :for="'player-' + index">{{ 'Nom du joueur ' + (index + 1) }}</label>
+                <InputText
+                  :id="'player-' + index"
+                  type="text"
+                  v-model="player.name"
+                  placeholder="Nom du joueur"
+                />
               </div>
             </div>
           </div>
           <div class="flex pt-6 justify-between">
-            <Button
-              label="Précédent"
-              severity="secondary"
-              @click="activateCallback('1')"
-            />
-            <Button
-              label="Créer la partie"
-              type="submit"
-            />
+            <Button label="Précédent" severity="secondary" @click="activateCallback('1')" />
+            <Button label="Créer la partie" type="submit" />
           </div>
         </StepPanel>
       </StepPanels>

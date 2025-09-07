@@ -1,32 +1,43 @@
 import { createRouter, createWebHistory } from "vue-router"
-import DartHomeView from "@/home/dart-home.view.vue"
+import DartHomeView from '@/main/home/dart-home.view.vue'
 import CreateGameView from "@/create-game/create-game.view.vue"
 import CameraCalibrationView from "@/camera-calibration/camera-calibration.view.vue";
-import DartGameView from "@/game/dart-game.view.vue";
+import DartGameView from '@/main/game/dart-game.view.vue'
+import DartboardCommonView from '@/main/dartboard-common.view.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
-      name: "home",
-      component: DartHomeView
+      path: '/',
+      redirect: '/dartboard/home',
     },
     {
-      path: "/create-game",
-      name: "create-game",
-      component: CreateGameView
+      path: '/dartboard',
+      component: DartboardCommonView,
+      children: [
+        {
+          path: 'home',
+          name: 'home',
+          component: DartHomeView,
+        },
+        {
+          path: 'game',
+          name: 'game',
+          component: DartGameView,
+        },
+      ],
     },
     {
-      path: "/game",
-      name: "game",
-      component: DartGameView
+      path: '/create-game',
+      name: 'create-game',
+      component: CreateGameView,
     },
     {
-      path: "/camera-calibration",
-      name: "camera-calibration",
-      component: CameraCalibrationView
-    }
+      path: '/camera-calibration',
+      name: 'camera-calibration',
+      component: CameraCalibrationView,
+    },
   ],
 })
 
