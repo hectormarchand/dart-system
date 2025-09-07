@@ -38,7 +38,6 @@ export class StreamWebservice {
                 const interval = setInterval(writeFrame, 50); // ~10 fps
 
                 req.on('close', () => {
-                    console.log("closing")
                     clearInterval(interval);
                 });
             })
@@ -69,7 +68,6 @@ export class StreamWebservice {
                 const interval = setInterval(writeFrame, 50); // ~10 fps
 
                 req.on('close', () => {
-                    console.log("closing")
                     clearInterval(interval);
                 });
             })
@@ -100,7 +98,6 @@ export class StreamWebservice {
                 const interval = setInterval(writeFrame, 50); // ~10 fps
 
                 req.on('close', () => {
-                    console.log("closing")
                     clearInterval(interval);
                 });
             })

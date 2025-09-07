@@ -9,7 +9,7 @@ export interface DartPlayer {
 }
 
 export interface DartGame {
-  id: never
+  _id: string
   players: DartPlayer[]
   gameType: DartGameType
   totalRound: number
@@ -30,7 +30,7 @@ export class CreateDartGameDto {
 }
 
 export interface DartHitDto {
-  x: number
-  y: number
+  r: number
+  theta: number
   estimatedPoints: number
 }

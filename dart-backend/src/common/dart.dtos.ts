@@ -4,15 +4,15 @@ export class CreatePlayerDto {
     name?: string;
 }
 
-export class CreateDartGameDto {
+export interface CreateDartGameDto {
     players?: CreatePlayerDto[];
-    gameType?: DartGameType;
+    gameType: DartGameType;
     totalRound?: number;
 }
 
 export class DartHitDto {
-    x!: number;
-    y!: number;
+    r!: number;
+    theta!: number; // Theta in rad
     estimatedPoints!: number;
 }
 

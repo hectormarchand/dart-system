@@ -37,7 +37,7 @@ export class DartHitService {
         currentPlayer.nbOfDartsThrownThisRound ++;
 
         // Update player ppd and player score
-        currentPlayer.score += dartHitDto.estimatedPoints;
+        currentPlayer.score -= dartHitDto.estimatedPoints;
         currentPlayer.scoreThisRound += dartHitDto.estimatedPoints;
         const totalDartThrown: number = (dartGame.currentRound - 1) * THROW_PER_ROUND + currentPlayer.nbOfDartsThrownThisRound;
         currentPlayer.ppd = currentPlayer.score / totalDartThrown;
@@ -68,10 +68,12 @@ export class DartHitService {
         this.clientEvents.push(eventStream);
 
         eventStream.send();
+
+        eventStream.push("{}")
     }
 
     private pushDartHitToClient(dartHit: DartHitDto): void {
-        this.clientEvents.forEach(ce => ce.push(JSON.stringify(dartHit)));
+        this.clientEvents.forEach(async ce => await ce.push(JSON.stringify(dartHit)));
     }
 
 

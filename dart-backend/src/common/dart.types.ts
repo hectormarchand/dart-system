@@ -11,7 +11,7 @@ export class DartPlayer {
 }
 
 export class DartGame {
-    id?: ObjectId;
+    _id?: ObjectId;
     players!: DartPlayer[];
     gameType!: DartGameType;
     totalRound!: number;

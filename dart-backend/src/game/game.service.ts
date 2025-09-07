@@ -1,5 +1,5 @@
 import {Collection, Db} from "mongodb";
-import { DartGame, DartPlayer } from "../common/dart.types";
+import {DartGame, DartGameType, DartPlayer} from "../common/dart.types";
 import { CreateDartGameDto, CreatePlayerDto } from "../common/dart.dtos";
 import {createEventStream, EventStream, H3Event} from "h3";
 
@@ -19,21 +19,32 @@ export class GameService {
     }
 
     async createGame(createGame: CreateDartGameDto): Promise<DartGame> {
+        // Unactive all other games
+        await Promise.all(
+          (await this.getAllGames()).map(async otherGame => {
+              console.log(otherGame)
+              otherGame.active = false;
+              return this.updateGame(otherGame);
+          })
+        )
+
         const today: Date = new Date();
+
+        const totalScoreToDo = this.gameTypeToScore(createGame.gameType);
 
         const players: DartPlayer[] | undefined = createGame.players?.map((playerDto: CreatePlayerDto) => {
             return {
                 name: playerDto.name,
                 nbOfDartsThrownThisRound: 0,
                 ppd: 0,
-                score: 0,
+                score: totalScoreToDo,
                 scoreThisRound: 0,
             } as DartPlayer
         });
 
         const game: DartGame = {
             players: players ? players : [],
-            gameType: createGame.gameType ? createGame.gameType : "501",
+            gameType: createGame.gameType,
             totalRound: createGame.totalRound ? createGame.totalRound : 15,
             currentRound: 1,
             active: true,
@@ -73,7 +84,7 @@ export class GameService {
     }
 
     async updateGame(dartGame: DartGame): Promise<DartGame> {
-        await this.gamesCollection.replaceOne({ _id: dartGame.id }, dartGame);
+        await this.gamesCollection.replaceOne({_id: dartGame._id}, dartGame);
         return dartGame;
     }
 
@@ -88,6 +99,17 @@ export class GameService {
      */
     pushGameToClients(dartGame: DartGame): void {
         this.clientEvents.forEach(async ce => await ce.push(JSON.stringify(dartGame)));
+    }
+
+    private gameTypeToScore(gameType: DartGameType): number {
+        switch (gameType) {
+            case "301":
+                return 301;
+            case "501":
+                return 501;
+            case  "701":
+                return 701;
+        }
     }
 
 }
