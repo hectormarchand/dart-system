@@ -4,7 +4,7 @@
   "description": "Backend module for the dart system",
   "type": "module",
   "scripts": {
-    "dev": "listhen --watch --ws ./src/app.ts",
+    "dev": "listhen --watch ./src/app.ts",
     "build:prod": "tsc && esbuild src/server.ts --bundle --minify --platform=node --format=cjs --outfile=dist/server.cjs"
   },
   "author": "Hector Marchand",

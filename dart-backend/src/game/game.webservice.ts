@@ -48,8 +48,22 @@ export class GameWebService {
 
     router.get(
       this.ROUTE_PREFIX + "/stream-current-active",
-      defineEventHandler(async (event) => {
+      defineEventHandler((event) => {
         return this.gameService.streamActiveGame(event);
+      })
+    )
+
+    router.patch(
+      this.ROUTE_PREFIX + "/:id",
+      defineEventHandler((event) => {
+        // TODO, game patch from the client (wrong score)
+      })
+    )
+
+    router.patch(
+      this.ROUTE_PREFIX + "/:id/next-player",
+      defineEventHandler((event) => {
+        // TODO, patch from the client (press space to change player)
       })
     )
   }

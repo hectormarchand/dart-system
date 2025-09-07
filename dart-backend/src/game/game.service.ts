@@ -81,4 +81,12 @@ export class GameService {
         return null;
     }
 
+    /**
+     * Send the game to clients through SSE
+     * @param dartGame the dart game
+     */
+    pushGameToClients(dartGame: DartGame): void {
+        this.clientEvents.forEach(async ce => await ce.push(JSON.stringify(dartGame)));
+    }
+
 }

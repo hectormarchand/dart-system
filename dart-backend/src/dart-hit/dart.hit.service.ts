@@ -2,18 +2,17 @@
 import { DartGame, DartPlayer } from "../common/dart.types";
 import { DartHitDto } from "../common/dart.dtos";
 import { GameService } from "../game/game.service";
-import {WebsocketService} from "../websocket/websocket.service";
+import {createEventStream, EventStream, H3Event} from "h3";
 
 export class DartHitService {
 
     private gameService: GameService;
 
-    private websocketService: WebsocketService;
+    private clientEvents: EventStream[];
 
-    constructor(gameService: GameService,
-                websocketService: WebsocketService) {
+    constructor(gameService: GameService) {
         this.gameService = gameService;
-        this.websocketService = websocketService;
+        this.clientEvents = [];
     }
 
     async addDartHit(dartHitDto: DartHitDto): Promise<DartGame | null> {
@@ -22,10 +21,10 @@ export class DartHitService {
         if (currentActiveGame) {
             currentActiveGame = await this.updateGameAfterDartHit(dartHitDto, currentActiveGame);
             await this.gameService.updateGame(currentActiveGame);
-            this.websocketService.sendDartGameToPeers(currentActiveGame);
+            this.gameService.pushGameToClients(currentActiveGame);
         }
 
-        this.websocketService.sendDartHitToPeers(dartHitDto);
+        this.pushDartHitToClient(dartHitDto);
 
         return currentActiveGame;
     }
@@ -53,6 +52,22 @@ export class DartHitService {
         }
 
         return dartGame;
+    }
+
+    public streamDartHits(event: H3Event): void {
+        const eventStream: EventStream = createEventStream(event);
+
+        eventStream.onClosed(() => {
+            this.clientEvents = this.clientEvents.filter(ev => ev !== eventStream);
+        })
+
+        this.clientEvents.push(eventStream);
+
+        eventStream.send();
+    }
+
+    private pushDartHitToClient(dartHit: DartHitDto): void {
+        this.clientEvents.forEach(ce => ce.push(JSON.stringify(dartHit)));
     }
 
 

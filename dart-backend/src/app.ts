@@ -3,13 +3,11 @@ import {App, createApp, createRouter, Router, useBase} from "h3";
 import { GameWebService } from "./game/game.webservice";
 import {StreamWebservice} from "./stream/stream.webservice";
 import {DartHitWebService} from "./dart-hit/dart.hit.webservice";
-import {WebsocketWebservice} from "./websocket/websocket.webservice";
 import {Db} from "mongodb";
 import mongoService from "./mongo/mongo.service";
 import {GameService} from "./game/game.service";
 import {DartHitService} from "./dart-hit/dart.hit.service";
 import {StreamService} from "./stream/stream.service";
-import {WebsocketService} from "./websocket/websocket.service";
 
 // Create an app instance
 export const app: App = createApp();
@@ -32,13 +30,8 @@ function createWebServices() {
             const streamService: StreamService = new StreamService();
             const streamWebService: StreamWebservice = new StreamWebservice(streamService, apiRouter);
 
-            const websocketService: WebsocketService = new WebsocketService();
-            const websocketWebService: WebsocketWebservice = new WebsocketWebservice(websocketService);
-
-            const dartHitService: DartHitService = new DartHitService(gameService, websocketService);
+            const dartHitService: DartHitService = new DartHitService(gameService);
             const dartHitWebService: DartHitWebService = new DartHitWebService(dartHitService, apiRouter);
-
-            app.use("/ws", websocketWebService.createWsHandler());
         })
         .catch(e => {
             console.log("Cannot create web services : ", e);

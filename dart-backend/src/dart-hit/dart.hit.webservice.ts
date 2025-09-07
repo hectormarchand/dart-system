@@ -23,6 +23,13 @@ export class DartHitWebService {
                 return { status: "ok" };
             })
         )
+
+      router.get(
+        this.ROUTE_PREFIX + "/stream-hits",
+        defineEventHandler((event) => {
+          return this.dartHitService.streamDartHits(event);
+        })
+      )
     }
 
 }
