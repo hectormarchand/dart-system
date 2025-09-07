@@ -36,7 +36,6 @@ void camera_frames_iteration(CameraManager &camera_manager,
 
 int main(int argc, char** argv )
 {
-    std::cout << "Hello World!" << std::endl;
 
     // cv::VideoCapture cap;
     // cap.open("/dev/video-dart-left");

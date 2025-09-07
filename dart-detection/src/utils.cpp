@@ -8,7 +8,7 @@ namespace utils {
     std::string get_env_variable(const std::string& env_variable_name) {
         const char* value = std::getenv(env_variable_name.c_str());
         if (value == nullptr) {
-            return {}; // or throw an exception if you prefer
+            return {};
         }
         return { value };
     }

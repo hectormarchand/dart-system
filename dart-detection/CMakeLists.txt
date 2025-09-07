@@ -6,7 +6,7 @@ find_package(PkgConfig REQUIRED)
 find_package(CURL REQUIRED)
 pkg_check_modules(OPENCV REQUIRED opencv4)
 
-include_directories(${OPENCV_INCLUDE_DIRS} ${CURL_INCLUDE_DIR} include)
+include_directories(${OPENCV_INCLUDE_DIRS} ${CURL_INCLUDE_DIR} src/include)
 link_directories(${OPENCV_LIBRARY_DIRS})
 add_definitions(${OPENCV_CFLAGS_OTHER})
 
