@@ -3,14 +3,14 @@ import type { PropType } from 'vue'
 
 const props = defineProps({
   camera: {
-    type: String as PropType<"left" | "front" | "right">,
-    required: true
-  }
-});
+    type: String as PropType<'left' | 'front' | 'right'>,
+    required: true,
+  },
+})
 
-const cameraStreamUrl = `/api/stream/${props.camera}-camera`;
+const cameraStreamUrl = `/api/stream/${props.camera}-camera`
 </script>
 
 <template>
-  <img :src="cameraStreamUrl" alt="Camera stream video">
+  <img :src="cameraStreamUrl" alt="Camera stream video" />
 </template>

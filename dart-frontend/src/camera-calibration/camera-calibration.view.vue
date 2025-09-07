@@ -3,12 +3,13 @@ import CameraStream from '@/common/camera/camera-stream.component.vue'
 </script>
 
 <template>
-  <div class="pt-40 flex justify-between">
-    <div>
-      <CameraStream camera="left" class="border-2 border-dashed" />
-    </div>
-    <div>
-      <CameraStream camera="right" class="border-2 border-dashed" />
+  <div class="pt-40 flex justify-center">
+    <div class="w-[45rem]">
+      <Carousel :value="['left', 'front', 'right']" :num-visible="1" class="w-fit">
+        <template #item="camera">
+          <CameraStream :camera="camera.data" class="border-2 border-dashed" />
+        </template>
+      </Carousel>
     </div>
   </div>
 
