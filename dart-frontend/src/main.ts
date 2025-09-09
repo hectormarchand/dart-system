@@ -30,10 +30,10 @@ const dartPreset = definePreset(Nora, {
   components: {
     stepper: {
       steppanel: {
-        background: "transparent"
-      }
-    }
-  }
+        background: 'transparent',
+      },
+    },
+  },
 })
 
 app.use(PrimeVue, {
