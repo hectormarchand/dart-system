@@ -51,6 +51,11 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+    <div class="pt-15">
+      <RouterLink :to="{ name: 'home' }">
+        <Button label="Retour" />
+      </RouterLink>
+    </div>
   </div>
 </template>
 
