@@ -1,3 +1,5 @@
+import { useFetch } from '@vueuse/core'
+
 export class HttpService {
 
     BASE_URL: string = "/api";
@@ -5,30 +7,29 @@ export class HttpService {
     constructor() {}
 
     async get<T>({ path, params = {} }: { path: string, params?: Record<string, string> }): Promise<T> {
-        const queryParams = params.length ? "?" + new URLSearchParams(params).toString() : "";
+      const queryParams = params.length ? '?' + new URLSearchParams(params).toString() : ''
 
-        let json = undefined;
-        try {
-          const response = await fetch(this.BASE_URL + path + queryParams);
-          if ("application/json" === response.headers.get("Content-Type")) {
-            json = await response.json();
-          }
-        } catch (e) {
-          console.error(`Error during a GET request ${path} :`, e);
-        }
+      const { data, error } = await useFetch(this.BASE_URL + path + queryParams, {
+        method: 'GET',
+      }).json()
 
-        return json as T;
+      if (error.value) {
+        console.error(`Error during a GET request ${path} :`, error.value)
+      }
+
+      return data.value as T
     }
 
     async post<T>({ path, body }: { path: string, body: object }): Promise<T> {
-      let json;
-      try {
-        const response = await fetch(this.BASE_URL + path, { method: "POST", body: JSON.stringify(body) });
-        json = await response.json();
-      } catch (e) {
-        console.error(`Error during a POST request ${path} :`, e);
+      const { data, error } = await useFetch(this.BASE_URL + path, {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }).json()
+
+      if (error.value) {
+        console.error(`Error during a POST request ${path} :`, error.value)
       }
 
-      return json as T;
+      return data.value as T
     }
 }
