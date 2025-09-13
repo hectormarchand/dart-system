@@ -12,5 +12,5 @@ const cameraStreamUrl = `/api/stream/${props.camera}-camera`
 </script>
 
 <template>
-  <img :src="cameraStreamUrl" alt="Camera stream video" />
+  <img :src="cameraStreamUrl" alt="Camera stream video" class="border-2 border-dashed" />
 </template>

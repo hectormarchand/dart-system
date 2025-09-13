@@ -7,7 +7,7 @@ import CameraStream from '@/common/camera/camera-stream.component.vue'
     <div class="w-[45rem]">
       <Carousel :value="['left', 'front', 'right']" :num-visible="1" class="w-fit">
         <template #item="camera">
-          <CameraStream :camera="camera.data" class="border-2 border-dashed" />
+          <CameraStream :camera="camera.data" />
         </template>
       </Carousel>
     </div>

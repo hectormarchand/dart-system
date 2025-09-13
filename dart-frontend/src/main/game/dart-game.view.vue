@@ -4,6 +4,7 @@ import * as sse from '@/server-sent-events/server-sent-events.ts'
 import { type DartGame, type DartPlayer } from '@/common/dart.dtos.ts'
 import { HttpService } from '@/http/http.service.ts'
 import DartSvg from '@/common/dartboard/dart-svg.component.vue'
+import CameraStream from '@/common/camera/camera-stream.component.vue'
 
 const httpService: HttpService = new HttpService()
 
@@ -23,8 +24,13 @@ onMounted(async () => {
 
 <template>
   <div class="flex flex-col" v-if="dartGame && currentPlayer">
-    <div class="text-center text-8xl pb-36 player-score-this-round">
-      <span>{{ currentPlayer.scoreThisRound }}</span>
+    <div class="grid grid-cols-2 gap-4 pb-20">
+      <div class="flex items-center justify-center text-8xl player-score-this-round">
+        <span>{{ currentPlayer.scoreThisRound }}</span>
+      </div>
+      <div class="flex justify-center">
+        <CameraStream camera="front" class="w-72 aspect-4/3" />
+      </div>
     </div>
 
     <div class="grid grid-cols-2 gap-4">
