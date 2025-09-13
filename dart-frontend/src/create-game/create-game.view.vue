@@ -36,7 +36,7 @@ async function createGame() {
   <form class="card flex justify-center pt-20" @submit.prevent="createGame">
     <Stepper value="1" linear class="basis-[50rem]">
       <StepList>
-        <Step value="1">Sélection du type de partie</Step>
+        <Step value="1">Selection du type de partie</Step>
         <Step value="2">Ajout des joueurs</Step>
       </StepList>
       <StepPanels>
@@ -93,8 +93,8 @@ async function createGame() {
             </div>
           </div>
           <div class="flex pt-6 justify-between">
-            <Button label="Précédent" severity="secondary" @click="activateCallback('1')" />
-            <Button label="Créer la partie" type="submit" />
+            <Button label="Precedent" severity="secondary" @click="activateCallback('1')" />
+            <Button label="Creer la partie" type="submit" />
           </div>
         </StepPanel>
       </StepPanels>
