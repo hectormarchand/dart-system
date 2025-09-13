@@ -1,6 +1,7 @@
-import {defineEventHandler, readBody, Router} from "h3";
+import {createError, defineEventHandler, readBody, Router} from "h3";
 import {GameService} from "./game.service";
-import {CreateDartGameDto} from "../common/dart.dtos";
+import {CreateDartGameDto, PatchGameDto} from "../common/dart.dtos";
+import {DartGame} from "../common/dart.types";
 
 export class GameWebService {
 
@@ -54,17 +55,28 @@ export class GameWebService {
     )
 
     router.patch(
-      this.ROUTE_PREFIX + "/:id",
-      defineEventHandler((event) => {
-        // TODO, game patch from the client (wrong score)
-      })
-    )
+        this.ROUTE_PREFIX + "/current-active",
+        defineEventHandler(async (event) => {
+            const pacthDto: PatchGameDto = JSON.parse(await readBody(event));
+            if (!this.isValidGamePatch(pacthDto)) {
+                throw createError({statusCode: 400, statusMessage: "Invalid patch request"});
+            }
 
-    router.patch(
-      this.ROUTE_PREFIX + "/:id/next-player",
-      defineEventHandler((event) => {
-        // TODO, patch from the client (press space to change player)
+            const currentActiveGame = await this.gameService.getActiveGame();
+
+            if (currentActiveGame == null) {
+                throw createError({statusCode: 400, statusMessage: "No current active game"});
+            }
+
+            const patchedGame: DartGame = await this.gameService.patchGame(currentActiveGame, pacthDto);
+            this.gameService.pushGameToClients(patchedGame);
+
+            return patchedGame;
       })
     )
   }
+
+    private isValidGamePatch(patchDto: PatchGameDto): boolean {
+        return patchDto.type === "next-player" || (patchDto.type === "fix-score" && patchDto.fix !== undefined);
+    }
 }

@@ -3,15 +3,19 @@ import { DartGame, DartPlayer } from "../common/dart.types";
 import { DartHitDto } from "../common/dart.dtos";
 import { GameService } from "../game/game.service";
 import {createEventStream, EventStream, H3Event} from "h3";
+import {GameBusinessService} from "../game-business/game-business.service";
 
 export class DartHitService {
 
     private gameService: GameService;
 
+    private gameBusinessService: GameBusinessService;
+
     private clientEvents: EventStream[];
 
-    constructor(gameService: GameService) {
+    constructor(gameService: GameService, gameBusinessService: GameBusinessService) {
         this.gameService = gameService;
+        this.gameBusinessService = gameBusinessService;
         this.clientEvents = [];
     }
 
@@ -19,7 +23,7 @@ export class DartHitService {
         // if game active, update game
         let currentActiveGame: DartGame | null = await this.gameService.getActiveGame();
         if (currentActiveGame) {
-            currentActiveGame = await this.updateGameAfterDartHit(dartHitDto, currentActiveGame);
+            currentActiveGame = this.updateGameAfterDartHit(dartHitDto, currentActiveGame);
             await this.gameService.updateGame(currentActiveGame);
             this.gameService.pushGameToClients(currentActiveGame);
         }
@@ -29,31 +33,19 @@ export class DartHitService {
         return currentActiveGame;
     }
 
-    // TODO : maybe move this method to buisinessDartService
-    private async updateGameAfterDartHit(dartHitDto: DartHitDto, dartGame: DartGame): Promise<DartGame> {
-        const THROW_PER_ROUND = 3;
-
+    private updateGameAfterDartHit(dartHitDto: DartHitDto, dartGame: DartGame): DartGame {
         const currentPlayer: DartPlayer = dartGame.players[dartGame.currentPlayerIndex];
         currentPlayer.nbOfDartsThrownThisRound ++;
 
         // Update player ppd and player score
         currentPlayer.score -= dartHitDto.estimatedPoints;
         currentPlayer.scoreThisRound += dartHitDto.estimatedPoints;
-        const totalDartThrown: number = (dartGame.currentRound - 1) * THROW_PER_ROUND + currentPlayer.nbOfDartsThrownThisRound;
-        currentPlayer.ppd = currentPlayer.score / totalDartThrown;
+        currentPlayer.scoreIncludingBust += dartHitDto.estimatedPoints;
+        currentPlayer.nbOfDartsThrownTotal++;
+        currentPlayer.ppd = currentPlayer.scoreIncludingBust / currentPlayer.nbOfDartsThrownTotal;
 
-        // Check if it is time to change the player
-        if (currentPlayer.nbOfDartsThrownThisRound >= THROW_PER_ROUND) {
-            if (dartGame.currentPlayerIndex === dartGame.players.length - 1) {
-                dartGame.currentRound ++;
-                dartGame.players.forEach(player => {
-                    player.nbOfDartsThrownThisRound = 0;
-                    player.scoreThisRound = 0;
-                });
-            }
-
-            dartGame.currentPlayerIndex = (dartGame.currentPlayerIndex + 1) % dartGame.players.length;
-        }
+        // Update the game in general
+        dartGame = this.gameBusinessService.executeOneStepInGame(dartGame);
 
         return dartGame;
     }

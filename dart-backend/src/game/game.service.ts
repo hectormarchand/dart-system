@@ -1,16 +1,20 @@
 import {Collection, Db} from "mongodb";
 import {DartGame, DartGameType, DartPlayer} from "../common/dart.types";
-import { CreateDartGameDto, CreatePlayerDto } from "../common/dart.dtos";
+import {CreateDartGameDto, CreatePlayerDto, PatchGameDto} from "../common/dart.dtos";
 import {createEventStream, EventStream, H3Event} from "h3";
+import {GameBusinessService} from "../game-business/game-business.service";
 
 export class GameService {
 
     private gamesCollection: Collection<DartGame>;
 
+    private gameBusinessService: GameBusinessService;
+
     private clientEvents: EventStream[];
 
-    constructor(mongoDb: Db) {
+    constructor(mongoDb: Db, gameBusinessService: GameBusinessService) {
         this.gamesCollection = mongoDb.collection<DartGame>("games");
+        this.gameBusinessService = gameBusinessService;
         this.clientEvents = [];
     }
 
@@ -36,14 +40,17 @@ export class GameService {
             return {
                 name: playerDto.name,
                 nbOfDartsThrownThisRound: 0,
+                nbOfDartsThrownTotal: 0,
                 ppd: 0,
                 score: totalScoreToDo,
+                scoreIncludingBust: 0,
                 scoreThisRound: 0,
             } as DartPlayer
         });
 
         const game: DartGame = {
             players: players ? players : [],
+            winner: undefined,
             gameType: createGame.gameType,
             totalRound: createGame.totalRound ? createGame.totalRound : 15,
             currentRound: 1,
@@ -88,9 +95,34 @@ export class GameService {
         return dartGame;
     }
 
-    async patchGame(patch: any): Promise<DartGame | null> {
-        // TODO : implement this method (fix from client or)
-        return null;
+    async patchGame(currentActiveGame: DartGame, patch: PatchGameDto): Promise<DartGame> {
+        switch (patch.type) {
+            case "next-player":
+                currentActiveGame = this.patchGameNextPlayer(currentActiveGame);
+                break;
+            case "fix-score":
+                // currentActiveGame = this.patchGameFixScore(currentActiveGame);
+                break;
+        }
+
+        currentActiveGame = await this.updateGame(currentActiveGame);
+
+        return currentActiveGame;
+    }
+
+    private patchGameNextPlayer(game: DartGame): DartGame {
+        const currentPlayer: DartPlayer = game.players[game.currentPlayerIndex];
+
+        // Update player ppd and player score
+        currentPlayer.nbOfDartsThrownThisRound = 3;
+        currentPlayer.nbOfDartsThrownTotal = Math.ceil((currentPlayer.nbOfDartsThrownTotal + 1) / 3) * 3;
+        currentPlayer.ppd = currentPlayer.scoreIncludingBust / currentPlayer.nbOfDartsThrownTotal;
+
+        return this.gameBusinessService.executeOneStepInGame(game);
+    }
+
+    // TODO
+    private patchGameFixScore(game: DartGame): void {
     }
 
     /**

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, type Ref, watch } from 'vue'
 import * as sse from '@/server-sent-events/server-sent-events.ts'
-import { type DartGame, type DartPlayer } from '@/common/dart.dtos.ts'
+import { type DartGame, type DartPlayer, type PatchGameDto } from '@/common/dart.dtos.ts'
 import { HttpService } from '@/http/http.service.ts'
 import DartSvg from '@/common/dartboard/dart-svg.component.vue'
 import CameraStream from '@/common/camera/camera-stream.component.vue'
+import { onKeyStroke } from '@vueuse/core'
 
 const httpService: HttpService = new HttpService()
 
@@ -17,6 +18,18 @@ watch(sse.dartGameEvent, (updatedGame) => {
   dartGame.value = updatedGame
 })
 
+// Force the game to move to the next player if the space touch is pressed
+onKeyStroke(' ', async () => {
+  await nextPlayer()
+})
+
+async function nextPlayer() {
+  const payload: PatchGameDto = {
+    type: 'next-player',
+  }
+  await httpService.patch({ path: '/games/current-active', body: payload })
+}
+
 onMounted(async () => {
   dartGame.value = await httpService.get<DartGame>({ path: '/games/current-active' })
 })
@@ -24,7 +37,7 @@ onMounted(async () => {
 
 <template>
   <div class="flex flex-col" v-if="dartGame && currentPlayer">
-    <div class="grid grid-cols-2 gap-4 pb-20">
+    <div class="grid grid-cols-2 gap-4 pb-16">
       <div class="flex items-center justify-center text-8xl player-score-this-round">
         <span>{{ currentPlayer.scoreThisRound }}</span>
       </div>
@@ -32,6 +45,8 @@ onMounted(async () => {
         <CameraStream camera="front" class="w-72 aspect-4/3" />
       </div>
     </div>
+
+    <div class="text-center pb-2">{{ dartGame.currentRound }} / {{ dartGame.totalRound }}</div>
 
     <div class="grid grid-cols-2 gap-4">
       <div

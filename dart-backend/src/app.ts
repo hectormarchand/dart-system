@@ -8,6 +8,7 @@ import mongoService from "./mongo/mongo.service";
 import {GameService} from "./game/game.service";
 import {DartHitService} from "./dart-hit/dart.hit.service";
 import {StreamService} from "./stream/stream.service";
+import {GameBusinessService} from "./game-business/game-business.service";
 
 // Create an app instance
 export const app: App = createApp();
@@ -24,13 +25,15 @@ createWebServices();
 function createWebServices() {
     getMongoInstance()
         .then((mongoDb: Db) => {
-            const gameService: GameService = new GameService(mongoDb);
+            const gameBusinessService: GameBusinessService = new GameBusinessService();
+
+            const gameService: GameService = new GameService(mongoDb, gameBusinessService);
             const gameWebService: GameWebService = new GameWebService(gameService, apiRouter);
 
             const streamService: StreamService = new StreamService();
             const streamWebService: StreamWebservice = new StreamWebservice(streamService, apiRouter);
 
-            const dartHitService: DartHitService = new DartHitService(gameService);
+            const dartHitService: DartHitService = new DartHitService(gameService, gameBusinessService);
             const dartHitWebService: DartHitWebService = new DartHitWebService(dartHitService, apiRouter);
         })
         .catch(e => {

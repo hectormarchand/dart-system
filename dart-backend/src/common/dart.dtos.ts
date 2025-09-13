@@ -16,3 +16,8 @@ export class DartHitDto {
     estimatedPoints!: number;
 }
 
+export interface PatchGameDto {
+    type: "next-player" | "fix-score",
+    fix?: number // TO BE IMPLEMENTED : fix a wrong score from the client
+}
+
