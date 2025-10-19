@@ -1,7 +1,7 @@
 services:
   mongo:
     image: mongo:8.0.11
-    container_name: dart-system-monogdb-prod
+    container_name: dart-system-mongodb-prod
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: dart
@@ -41,6 +41,10 @@ services:
     restart: unless-stopped
     environment:
       - BACKEND_URL=http://backend:3000
+    devices:
+      - /dev/video-dart-left:/dev/video-dart-left
+      - /dev/video-dart-front:/dev/video-dart-front
+      - /dev/video-dart-right:/dev/video-dart-right
     depends_on:
       - backend
 
