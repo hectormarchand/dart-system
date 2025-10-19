@@ -52,7 +52,7 @@ onMounted(async () => {
       <div
         class="border-2 border-dashed h-30 w-80 p-2 flex flex-col justify-center items-center"
         v-for="(player, index) in dartGame.players"
-        :class="{ borderOrange: player === currentPlayer }"
+        :class="{ 'borderOrange border-5': player === currentPlayer }"
         :key="index"
       >
         <span>{{ player.name.toUpperCase() }}</span>
