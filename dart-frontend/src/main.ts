@@ -24,14 +24,7 @@ const dartPreset = definePreset(Nora, {
       700: '{orange.700}',
       800: '{orange.800}',
       900: '{orange.900}',
-      950: '{orange.950}'
-    }
-  },
-  components: {
-    stepper: {
-      steppanel: {
-        background: 'transparent',
-      },
+      950: '{orange.950}',
     },
   },
 })

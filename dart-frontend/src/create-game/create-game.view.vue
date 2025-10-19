@@ -42,9 +42,9 @@ async function createGame() {
       <StepPanels>
         <StepPanel v-slot="{ activateCallback }" value="1">
           <div class="flex flex-col h-60">
-            <div class="border-2 border-dashed flex-auto flex flex-col">
+            <div class="border-2 border-dashed border-white flex-auto flex flex-col">
               <div class="w-full grid grid-cols-2 px-28 pt-12 items-center">
-                <span>Nombre de joueurs</span>
+                <span class="text-white">Nombre de joueurs</span>
                 <InputNumber
                   v-model="numberOfPlayers"
                   inputId="horizontal-buttons"
@@ -55,16 +55,16 @@ async function createGame() {
                   :min="1"
                 >
                   <template #incrementicon>
-                    <span class="text-xl">&plus;</span>
+                    <span class="text-xl text-white">&plus;</span>
                   </template>
                   <template #decrementicon>
-                    <span class="text-xl">&minus;</span>
+                    <span class="text-xl text-white">&minus;</span>
                   </template>
                 </InputNumber>
               </div>
 
               <div class="w-full grid grid-cols-2 px-28 pt-12 items-center">
-                <span>Type de jeu</span>
+                <span class="text-white">Type de jeu</span>
                 <SelectButton v-model="gameType" :options="gameTypeOptions" />
               </div>
             </div>
@@ -79,10 +79,12 @@ async function createGame() {
         <StepPanel v-slot="{ activateCallback }" value="2">
           <div class="flex flex-col">
             <div
-              class="border-2 border-dashed flex flex-auto flex-col gap-3 justify-center items-center py-10"
+              class="border-2 border-dashed border-white flex flex-auto flex-col gap-3 justify-center items-center py-10"
             >
               <div v-for="(player, index) in players" :key="index" class="flex flex-col gap-1">
-                <label :for="'player-' + index">{{ 'Nom du joueur ' + (index + 1) }}</label>
+                <label :for="'player-' + index" class="text-white">{{
+                  'Nom du joueur ' + (index + 1)
+                }}</label>
                 <InputText
                   :id="'player-' + index"
                   type="text"
@@ -101,3 +103,21 @@ async function createGame() {
     </Stepper>
   </form>
 </template>
+
+<style scoped>
+:deep(.p-disabled .p-step-title) {
+  color: white;
+}
+
+:deep(.p-inputnumber-button:not(:disabled):hover) {
+  background: transparent;
+}
+
+:deep(.p-inputnumber-input) {
+  text-align: center;
+}
+
+:deep(.p-steppanel) {
+  background: transparent;
+}
+</style>
