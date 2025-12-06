@@ -2,7 +2,7 @@
 // Created by hector on 22/07/25.
 //
 
-#include "../include/camera_streaming.h"
+#include "../include/camera_streaming.hpp"
 
 #include <iostream>
 #include <opencv2/imgcodecs.hpp>
