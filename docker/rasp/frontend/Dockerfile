@@ -2,11 +2,11 @@ FROM node:24-alpine AS build
 
 WORKDIR /build
 
-COPY ./package*.json .
+COPY dart-frontend/package*.json .
 
-RUN npm ci
+RUN npm ci --prefer-offline --only=production --silent
 
-COPY ../ ./
+COPY dart-frontend/ ./
 
 RUN npm run build
 
@@ -14,7 +14,7 @@ FROM nginx:1.29.0-alpine AS app
 
 COPY --from=build /build/dist /usr/share/nginx/html
 
-COPY ./docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/rasp/frontend/nginx/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
