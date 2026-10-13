@@ -2,7 +2,7 @@
 // Created by hector on 12/09/2025.
 //
 
-#include "include/camera_calibration.h"
+#include "include/camera_calibration.hpp"
 
 #include <iostream>
 #include <opencv2/imgproc.hpp>
@@ -51,9 +51,60 @@ cv::RotatedRect CameraCalibration::calibrate(cv::Mat &src) {
 
     return resultEllipse;
 }
+cv::Matx33f CameraCalibration::toCircleSpace(const cv::RotatedRect& ellipse) {
+    // OpenCV stores angle in degrees
+    float angle = ellipse.angle * static_cast<float>(CV_PI) / 180.0f;
 
-cv::Mat CameraCalibration::toCircleSpace(cv::RotatedRect &ellipse) {
-    return {};
+    float x = ellipse.center.x;
+    float y = ellipse.center.y;
+
+    // RotatedRect::size contains full width/height (diameters)
+    float a = ellipse.size.width * 0.5f;   // semi-major
+    float b = ellipse.size.height * 0.5f;  // semi-minor
+
+    float c = std::cos(angle);
+    float s = std::sin(angle);
+
+    // Rotation matrices
+    cv::Matx33f R1(
+         c,  s, 0,
+        -s,  c, 0,
+         0,  0, 1
+    );
+
+    cv::Matx33f R2(
+         c, -s, 0,
+         s,  c, 0,
+         0,  0, 1
+    );
+
+    // Translation to origin
+    cv::Matx33f T1(
+        1, 0, -x,
+        0, 1, -y,
+        0, 0,  1
+    );
+
+    // Translation back
+    cv::Matx33f T2(
+        1, 0, x,
+        0, 1, y,
+        0, 0, 1
+    );
+
+    // Scale Y so ellipse becomes circle
+    float scale = (b != 0.0f) ? (a / b) : 1.0f;
+
+    cv::Matx33f D(
+        1,     0, 0,
+        0, scale, 0,
+        0,     0, 1
+    );
+
+    // Final transform: T2 * R2 * D * R1 * T1
+    cv::Matx33f M = T2 * R2 * D * R1 * T1;
+
+    return M;
 }
 
 void CameraCalibration::removeSmallRegions(cv::Mat &mask, int minSize) {
@@ -70,4 +121,10 @@ void CameraCalibration::removeSmallRegions(cv::Mat &mask, int minSize) {
     }
 
     mask = cleaned;
+}
+
+cv::Point2f CameraCalibration::applyTransform(const cv::Matx33f& M, const cv::Point2f& p) {
+    const cv::Vec3f v(p.x, p.y, 1.0f);
+    cv::Vec3f r = M * v;
+    return {r[0], r[1]};
 }

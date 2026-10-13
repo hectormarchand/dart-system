@@ -31,5 +31,13 @@ public:
      * @param image l'ellipse trouvée dans this::calibrate
      * @return
      */
-    cv::Mat toCircleSpace(cv::RotatedRect& ellipse);
+    cv::Matx33f toCircleSpace(const cv::RotatedRect& ellipse);
+
+    /**
+     *
+     * @param M
+     * @param p
+     * @return
+     */
+    cv::Point2f applyTransform(const cv::Matx33f& M, const cv::Point2f& p);
 };
